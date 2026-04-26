@@ -30,6 +30,13 @@ const dataSchema = new mongoose.Schema({
   files:     { type: Array, default: [] },
   notes:     { type: Array, default: [] },
   activity:  { type: Array, default: [] },
+  goals:     { type: Array, default: [] },
+  journal:   { type: Array, default: [] },
+  writing:   { type: Array, default: [] },
+  vault:     { type: Array, default: [] },
+  timeline:  { type: Array, default: [] },
+  travel:    { type: Array, default: [] },
+  career:    { type: Object, default: { journey: '', skills: [], resume: '', startup: [] } },
   updatedAt: { type: Date, default: Date.now },
 });
 
@@ -114,10 +121,10 @@ app.get('/api/data', auth, async (req, res) => {
 // SAVE workspace data (full replace)
 app.post('/api/data', auth, async (req, res) => {
   try {
-    const { tasks, projects, calEvents, files, notes, activity } = req.body;
+    const { tasks, projects, calEvents, files, notes, activity, goals, journal, writing, vault, timeline, travel, career } = req.body;
     const data = await WorkspaceData.findOneAndUpdate(
       { userId: req.user.id },
-      { tasks, projects, calEvents, files, notes, activity, updatedAt: new Date() },
+      { tasks, projects, calEvents, files, notes, activity, goals, journal, writing, vault, timeline, travel, career, updatedAt: new Date() },
       { upsert: true, new: true }
     );
     res.json({ ok: true, updatedAt: data.updatedAt });
