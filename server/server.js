@@ -10,8 +10,8 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(cors({ origin: '*', methods: ['GET','POST','PUT','DELETE'], allowedHeaders: ['Content-Type','Authorization'] }));
 
-// Serve static files (CSS, JS)
-app.use(express.static(path.join(__dirname)));
+// Serve static files (CSS, JS) from public folder
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // ─── DB CONNECTION ───────────────────────────────────────────
 mongoose.connect(process.env.MONGO_URI)
@@ -62,7 +62,10 @@ function auth(req, res, next) {
 // ─── ROUTES ──────────────────────────────────────────────────
 
 // Health check
-app.get('/', (req, res) => res.json({ ok: true, msg: 'MySpace API running' }));
+app.use(express.static(path.join(__dirname, '..', 'public')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
 
 // REGISTER
 app.post('/api/register', async (req, res) => {
@@ -154,7 +157,7 @@ app.post('/api/change-password', auth, async (req, res) => {
 
 // Fallback to index.html for SPA routing
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
